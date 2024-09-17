@@ -11,17 +11,23 @@ export class BookService {
   ) {}
 
   async findAll(query: Query): Promise<Book[]> {
+    const bookperpage = 2;
+    const currentpage = +query.page || 1;
+    const skipped = bookperpage * (currentpage - 1);
     const keyword = query.keyword
       ? { title: { $regex: query.keyword, $options: 'i' } }
       : {};
 
-    return await this.bookModel.find({ ...keyword });
+    return await this.bookModel
+      .find({ ...keyword })
+      .limit(bookperpage)
+      .skip(skipped);
   }
   async createBook(book: Book): Promise<Book> {
     const res = await this.bookModel.create(book);
     return res;
   }
-  async findByid(id: string): Promise<Book> {
+  async findByid(id: number): Promise<Book> {
     const book = await this.bookModel.findById(id);
     if (!book) {
       throw new NotFoundException('book not found');

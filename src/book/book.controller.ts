@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -30,7 +31,7 @@ export class BookController {
   }
 
   @Get(':id')
-  async findByid(@Param('id') id: string): Promise<Book> {
+  async findByid(@Param('id', ParseIntPipe) id: number): Promise<Book> {
     return this.bookservice.findByid(id);
   }
 
